@@ -5,7 +5,7 @@
 				<h1>todos</h1>
 				<input class="new-todo" autocomplete="off" placeholder="What needs to be done?" v-model="newTodo" @keyup.enter="addTodo">
 			</header>
-			<section class="main">
+			<section class="main" v-show="todos.length">
 				<input id="toggle-all" class="toggle-all" type="checkbox">
 				<label for="toggle-all">Mark all as complete</label>
 				<ul class="todo-list">
@@ -19,7 +19,7 @@
 					</li>
 				</ul>
 			</section>
-			<footer class="footer">
+			<footer class="footer" v-show="todos.length">
 				<span class="todo-count">
 					<strong></strong> left
 				</span>
