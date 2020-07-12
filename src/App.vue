@@ -28,7 +28,7 @@
 					<li><a href="#/active">Active</a></li>
 					<li><a href="#/completed">Completed</a></li>
 				</ul>
-				<button class="clear-completed">
+				<button class="clear-completed" v-show="todos.length > remaning" @click="removeCompleted">
 					Clear completed
 				</button>
 			</footer>
@@ -59,6 +59,12 @@ export default {
     todos: {
       deep: true,
       handler: todoStorage.save
+    }
+  },
+
+  computed: {
+    remaning() {
+      return this.todos.filter(todo => !todo.completed).length;
     }
   },
 
@@ -96,6 +102,10 @@ export default {
     removeTodo(todo) {
       const index = this.todos.indexOf(todo);
       this.todos.splice(index, 1);
+    },
+
+    removeCompleted() {
+      this.todos = this.todos.filter(todo => !todo.completed);
     }
   },
 
