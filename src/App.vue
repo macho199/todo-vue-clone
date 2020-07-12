@@ -3,7 +3,7 @@
     <section class="todoapp" v-cloak>
 			<header class="header">
 				<h1>todos</h1>
-				<input class="new-todo" autocomplete="off" placeholder="What needs to be done?">
+				<input class="new-todo" autocomplete="off" placeholder="What needs to be done?" v-model="newTodo" @keyup.enter="addTodo">
 			</header>
 			<section class="main">
 				<input id="toggle-all" class="toggle-all" type="checkbox">
@@ -42,11 +42,30 @@
 </template>
 
 <script>
+import todoStorage from './store';
+
 export default {
   name: 'app',
   data () {
     return {
-      
+      todos: [],
+      newTodo: ''
+    }
+  },
+  watch: {
+    todos: {
+      deep: true,
+      handler: todoStorage.save
+    }
+  },
+  methods: {
+    addTodo() {
+      const value = this.newTodo && this.newTodo.trim();
+      if (!value) {
+        return;
+      }
+      this.todos.push({id: this.todos.length + 1, title: value});
+      this.newTodo = '';
     }
   }
 }
