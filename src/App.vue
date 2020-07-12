@@ -9,10 +9,10 @@
 				<input id="toggle-all" class="toggle-all" type="checkbox">
 				<label for="toggle-all">Mark all as complete</label>
 				<ul class="todo-list">
-					<li class="todo">
+					<li class="todo" v-for="todo in todos" :key="todo.id">
 						<div class="view">
 							<input class="toggle" type="checkbox">
-							<label></label>
+							<label>{{ todo.title }}</label>
 							<button class="destroy"></button>
 						</div>
 						<input class="edit" type="text">
@@ -48,7 +48,7 @@ export default {
   name: 'app',
   data () {
     return {
-      todos: [],
+      todos: todoStorage.fetch(),
       newTodo: ''
     }
   },
