@@ -9,9 +9,9 @@
 				<input id="toggle-all" class="toggle-all" type="checkbox">
 				<label for="toggle-all">Mark all as complete</label>
 				<ul class="todo-list">
-					<li class="todo" v-for="todo in todos" :key="todo.id" :class="{ editing: todo == editedTodo }">
+					<li class="todo" v-for="todo in todos" :key="todo.id" :class="{ completed: todo.completed, editing: todo == editedTodo }">
 						<div class="view">
-							<input class="toggle" type="checkbox">
+            <input class="toggle" type="checkbox" v-model="todo.completed">
 							<label @dblclick="editTodo(todo)">{{ todo.title }}</label>
 							<button class="destroy" @click="removeTodo(todo)"></button>
 						</div>
@@ -68,7 +68,7 @@ export default {
       if (!value) {
         return;
       }
-      this.todos.push({id: this.todos.length + 1, title: value});
+      this.todos.push({id: this.todos.length + 1, title: value, completed: false});
       this.newTodo = '';
     },
 
