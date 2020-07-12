@@ -9,13 +9,13 @@
 				<input id="toggle-all" class="toggle-all" type="checkbox">
 				<label for="toggle-all">Mark all as complete</label>
 				<ul class="todo-list">
-					<li class="todo" v-for="todo in todos" :key="todo.id">
+					<li class="todo" v-for="todo in todos" :key="todo.id" :class="{ editing: todo == editedTodo }">
 						<div class="view">
 							<input class="toggle" type="checkbox">
-							<label>{{ todo.title }}</label>
+							<label @dblclick="editTodo(todo)">{{ todo.title }}</label>
 							<button class="destroy"></button>
 						</div>
-						<input class="edit" type="text">
+						<input class="edit" type="text" v-model="todo.title" v-todo-focus="todo == editedTodo" @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)">
 					</li>
 				</ul>
 			</section>
@@ -46,18 +46,22 @@ import todoStorage from './store';
 
 export default {
   name: 'app',
+
   data () {
     return {
       todos: todoStorage.fetch(),
-      newTodo: ''
+      newTodo: '',
+      editedTodo: null,
     }
   },
+
   watch: {
     todos: {
       deep: true,
       handler: todoStorage.save
     }
   },
+
   methods: {
     addTodo() {
       const value = this.newTodo && this.newTodo.trim();
@@ -66,6 +70,40 @@ export default {
       }
       this.todos.push({id: this.todos.length + 1, title: value});
       this.newTodo = '';
+    },
+
+    editTodo(todo) {
+      this.beforeEditCache = todo.title;
+      this.editedTodo = todo;
+    },
+
+    doneEdit(todo) {
+      if (!this.editedTodo) {
+        return;
+      }
+      this.editedTodo = null;
+      todo.title = todo.title.trim();
+      if (!todo.title) {
+        this.removeTodo(todo);
+      }
+    },
+
+    cancelEdit(todo) {
+      this.editedTodo = null;
+      todo.title = this.beforeEditCache;
+    },
+
+    removeTodo(todo) {
+      const index = this.todos.indexOf(todo);
+      this.todos.splice(index, 1);
+    }
+  },
+
+  directives: {
+    'todo-focus'(el, binding) {
+      if (binding) {
+        el.focus();
+      }
     }
   }
 }
