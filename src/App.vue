@@ -6,7 +6,7 @@
 				<input class="new-todo" autocomplete="off" placeholder="What needs to be done?" v-model="newTodo" @keyup.enter="addTodo">
 			</header>
 			<section class="main" v-show="todos.length">
-				<input id="toggle-all" class="toggle-all" type="checkbox">
+				<input id="toggle-all" class="toggle-all" type="checkbox" v-model="allDone">
 				<label for="toggle-all">Mark all as complete</label>
 				<ul class="todo-list">
 					<li class="todo" v-for="todo in todos" :key="todo.id" :class="{ completed: todo.completed, editing: todo == editedTodo }">
@@ -65,6 +65,17 @@ export default {
   computed: {
     remaning() {
       return this.todos.filter(todo => !todo.completed).length;
+    },
+
+    allDone: {
+      get() {
+        return this.remaning === 0;
+      },
+      set(value) {
+        this.todos.forEach(todo => {
+          todo.completed = value;
+        });
+      }
     }
   },
 
