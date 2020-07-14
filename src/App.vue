@@ -90,7 +90,7 @@ export default {
     },
 
     remaning() {
-      return this.todos.filter(todo => !todo.completed).length;
+      return filters.active(this.todos).length;
     },
 
     allDone: {
