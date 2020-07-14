@@ -9,7 +9,7 @@
 				<input id="toggle-all" class="toggle-all" type="checkbox" v-model="allDone">
 				<label for="toggle-all">Mark all as complete</label>
 				<ul class="todo-list">
-					<li class="todo" v-for="todo in todos" :key="todo.id" :class="{ completed: todo.completed, editing: todo == editedTodo }">
+					<li class="todo" v-for="todo in filteredTodos" :key="todo.id" :class="{ completed: todo.completed, editing: todo == editedTodo }">
 						<div class="view">
             <input class="toggle" type="checkbox" v-model="todo.completed">
 							<label @dblclick="editTodo(todo)">{{ todo.title }}</label>
@@ -24,9 +24,9 @@
 					<strong v-text="remaning"></strong> {{ pluralize('item', remaning) }} left
 				</span>
 				<ul class="filters">
-					<li><a href="#/all">All</a></li>
-					<li><a href="#/active">Active</a></li>
-					<li><a href="#/completed">Completed</a></li>
+					<li><a href="#/all" :class="{ selected: visibility == 'all' }">All</a></li>
+					<li><a href="#/active" :class="{ selected: visibility == 'active' }">Active</a></li>
+					<li><a href="#/completed" :class="{ selected: visibility == 'completed' }">Completed</a></li>
 				</ul>
 				<button class="clear-completed" v-show="todos.length > remaning" @click="removeCompleted">
 					Clear completed
@@ -44,6 +44,20 @@
 <script>
 import todoStorage from './store';
 
+const filters = {
+  all(todos) {
+    return todos;
+  },
+  
+  active(todos) {
+    return todos.filter(todo => !todo.completed);
+  },
+
+  completed(todos) {
+    return todos.filter(todo => todo.completed);
+  }
+};
+
 export default {
   name: 'app',
 
@@ -52,6 +66,7 @@ export default {
       todos: todoStorage.fetch(),
       newTodo: '',
       editedTodo: null,
+      visibility: 'all',
     }
   },
 
@@ -59,10 +74,21 @@ export default {
     todos: {
       deep: true,
       handler: todoStorage.save
+    },
+
+    '$route'() {
+      const path = this.$route.path.replace(/\//g, '');
+      if (['all', 'active', 'completed'].indexOf(path) >= 0) {
+        this.visibility = path;
+      }
     }
   },
 
   computed: {
+    filteredTodos() {
+      return filters[this.visibility](this.todos);
+    },
+
     remaning() {
       return this.todos.filter(todo => !todo.completed).length;
     },
