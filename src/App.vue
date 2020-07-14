@@ -20,8 +20,8 @@
 				</ul>
 			</section>
 			<footer class="footer" v-show="todos.length">
-				<span class="todo-count">
-					<strong></strong> left
+				<span class="todo-count" v-show="remaning">
+					<strong v-text="remaning"></strong> {{ pluralize('item', remaning) }} left
 				</span>
 				<ul class="filters">
 					<li><a href="#/all">All</a></li>
@@ -69,6 +69,10 @@ export default {
   },
 
   methods: {
+    pluralize(word, count) {
+      return word + (count === 1 ? '' : 's');
+    },
+
     addTodo() {
       const value = this.newTodo && this.newTodo.trim();
       if (!value) {
