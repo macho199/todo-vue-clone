@@ -115,7 +115,9 @@ export default {
       if (!value) {
         return;
       }
-      this.todos.push({id: this.todos.length + 1, title: value, completed: false});
+
+      const id = this.todos.length ? this.todos[this.todos.length - 1].id + 1 : 1;
+      this.todos.push({id, title: value, completed: false});
       this.newTodo = '';
     },
 
